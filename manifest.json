@@ -1,6 +1,6 @@
 {
     "name": "Linux Dash",
-    "id": "linudash",
+    "id": "linuxdash",
     "description": {
         "en": "A drop-in, low-overhead monitoring web dashboard for a linux machine.",
         "fr": "Un tableau de bord leger pour le monitoring d'un serveur linux."

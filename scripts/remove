@@ -1,0 +1,6 @@
+#!/bin/bash
+
+domain=$(sudo yunohost app setting linuxdash domain)
+
+sudo rm -rf /var/www/linuxdash
+sudo rm -f /etc/nginx/conf.d/$domain.d/linuxdash.conf

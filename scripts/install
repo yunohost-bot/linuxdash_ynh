@@ -5,6 +5,7 @@ app=linuxdash
 # Retrieve arguments
 domain=$1
 path=$2
+user=$3
 
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a $app
@@ -32,6 +33,9 @@ nginxconf=/etc/nginx/conf.d/$domain.d/$app.conf
 sudo cp ../conf/nginx.conf $nginxconf
 sudo chown root: $nginxconf
 sudo chmod 600 $nginxconf
+
+sudo yunohost app removeaccess $app
+sudo yunohost app addaccess $app -u $user
 
 # Reload web server
 sudo service nginx reload

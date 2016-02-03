@@ -37,6 +37,15 @@
                 },
                 "example": "/dash",
                 "default": "/dash"
+            },
+            {
+                "name": "user",
+		"type": "user",
+                "ask": {
+                    "en": "Choose the YunoHost user who got access to Linux-Dash",
+                    "fr": "Choisissez l’utilisateur YunoHost qui a accès à Linux-Dash"
+                },
+                "example": "john"
             }
         ]
     }

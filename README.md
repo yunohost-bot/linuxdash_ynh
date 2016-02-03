@@ -2,12 +2,11 @@
 
 Linux-Dash package for YunoHost
 A beautiful web dashboard for GNU/Linux
+CPU, RAM, network usage.
 
 * [Linux-Dash repository](https://github.com/afaqurk/linux-dash)
 * [Linux-Dash demo](http://linuxdash.afaqtariq.com/)
 * [YunoHost website](https://yunohost.org/)
-
-![Linux-Dash screenshot]()
 
 ### Install app
 ```bash

@@ -2,5 +2,9 @@
 
 domain=$(sudo yunohost app setting linuxdash domain)
 
+# Remove sources and nginx configuration
 sudo rm -rf /var/www/linuxdash
 sudo rm -f /etc/nginx/conf.d/$domain.d/linuxdash.conf
+
+# Reload nginx configuration
+sudo service nginx reload

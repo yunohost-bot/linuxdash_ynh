@@ -1,7 +1,7 @@
 #!/bin/bash
 
 app=linuxdash
-domain=$(sudo yunohost app setting linuxdash domain)
+domain=$(sudo yunohost app setting $app domain)
 
 # Remove sources and nginx configuration
 sudo rm -rf /var/www/$app
@@ -10,6 +10,10 @@ sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 # Remove service
 sudo supervisorctl stop $app
 sudo rm -f /etc/supervisor/conf.d/$app.conf
+
+# Remove supervisor package
+# Need to be manage with future manifest/moulinette Debian package management
+# sudo apt-get -y -qq remove supervisor
 
 # Reload nginx configuration
 sudo service nginx reload

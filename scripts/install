@@ -40,6 +40,7 @@ sudo cp ../conf/nginx.conf $nginxconf
 sudo chown root: $nginxconf
 sudo chmod 600 $nginxconf
 
+# Only give one user access to this app
 sudo yunohost app removeaccess $app
 sudo yunohost app addaccess $app -u $user
 

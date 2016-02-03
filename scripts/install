@@ -13,6 +13,12 @@ if [[ ! $? -eq 0 ]]; then
     exit 1
 fi
 
+# Check port availability
+sudo yunohost app checkport 8081
+if [[ ! $? -eq 0 ]]; then
+  exit 1
+fi
+
 # Copy files to the right place
 final_path=/var/www/$app
 sudo mkdir -p $final_path

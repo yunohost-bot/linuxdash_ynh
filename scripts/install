@@ -25,7 +25,7 @@ sudo chown -R www-data: $final_path
 sudo apt-get -y -qq install supervisor
 sudo cp ../conf/supervisor.conf /etc/supervisor/conf.d/$app.conf
 sudo supervisorctl update
-sudo supervisorctl restart $app
+sudo supervisorctl start $app
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf

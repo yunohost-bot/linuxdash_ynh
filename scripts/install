@@ -20,9 +20,14 @@ sudo cp -a ../sources/* $final_path
 # Set permissions
 sudo chown -R www-data: $final_path
 
+# Set as a service with supervisor
+sudo apt-get -y -qq install supervisor
+sudo cp ../conf/supervisor.conf /etc/supervisor/conf.d/$app.conf
+sudo supervisorctl update
+sudo supervisorctl restart $app
+
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
-sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/nginx.conf
 nginxconf=/etc/nginx/conf.d/$domain.d/$app.conf
 sudo cp ../conf/nginx.conf $nginxconf
 sudo chown root: $nginxconf

@@ -1,10 +1,15 @@
 #!/bin/bash
 
+app=linuxdash
 domain=$(sudo yunohost app setting linuxdash domain)
 
 # Remove sources and nginx configuration
-sudo rm -rf /var/www/linuxdash
-sudo rm -f /etc/nginx/conf.d/$domain.d/linuxdash.conf
+sudo rm -rf /var/www/$app
+sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+
+# Remove service
+sudo supervisorctl stop $app
+sudo rm -f /etc/supervisor/conf.d/$app.conf
 
 # Reload nginx configuration
 sudo service nginx reload

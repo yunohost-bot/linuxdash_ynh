@@ -9,7 +9,7 @@ A beautiful web dashboard for GNU/Linux which display CPU, RAM, memory, network 
 
 ### Install app
 ```bash
-sudo yunohost app install https://github/M5oul/linuxdash_ynh
+sudo yunohost app install https://github.com/M5oul/linuxdash_ynh
 ```
 
 ### App state

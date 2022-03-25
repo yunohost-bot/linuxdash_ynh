@@ -1,19 +1,72 @@
 #!/bin/bash
 
-app=linuxdash
-domain=$(sudo yunohost app setting $app domain)
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Remove sources and nginx configuration
-sudo rm -rf /var/www/$app
-sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+source _common.sh
+source /usr/share/yunohost/helpers
 
-# Remove service
-sudo supervisorctl stop $app
-sudo rm -f /etc/supervisor/conf.d/$app.conf
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading installation settings..."
 
-# Remove supervisor package
-# Need to be manage with future manifest/moulinette Debian package management
-# sudo apt-get -y -qq remove supervisor
+app=$YNH_APP_INSTANCE_NAME
 
-# Reload nginx configuration
-sudo service nginx reload
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+port=$(ynh_app_setting_get --app=$app --key=port)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+
+#=================================================
+# STANDARD REMOVE
+#=================================================
+# REMOVE SUPERVISOR
+#=================================================
+ynh_script_progression --message="Removing supervisor configuration..."
+
+supervisorctl stop $app
+ynh_secure_remove --file="/etc/supervisor/conf.d/$app.conf"
+supervisorctl update
+
+#=================================================
+# REMOVE APP MAIN DIR
+#=================================================
+ynh_script_progression --message="Removing app main directory..."
+
+# Remove the app directory securely
+ynh_secure_remove --file="$final_path"
+
+#=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing NGINX web server configuration..."
+
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Removing dependencies..."
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# REMOVE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Removing the dedicated system user..."
+
+# Delete a system user
+ynh_system_user_delete --username=$app
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Removal of $app completed"

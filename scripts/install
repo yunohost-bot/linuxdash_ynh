@@ -1,48 +1,134 @@
 #!/bin/bash
 
-app=linuxdash
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Retrieve arguments
-domain=$1
-path=$2
-user=$3
+source _common.sh
+source /usr/share/yunohost/helpers
 
-# Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app
-if [[ ! $? -eq 0 ]]; then
-    exit 1
-fi
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
 
-# Check port availability
-sudo yunohost app checkport 8081
-if [[ ! $? -eq 0 ]]; then
-  exit 1
-fi
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
-# Copy files to the right place
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+
+app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..."
+
 final_path=/var/www/$app
-sudo mkdir -p $final_path
-sudo cp -a ../sources/* $final_path
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
-# Set permissions
-sudo chown -R www-data: $final_path
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
-# Set as a service with supervisor
-sudo apt-get -y -qq install supervisor
-sudo cp ../conf/supervisor.conf /etc/supervisor/conf.d/$app.conf
-sudo supervisorctl update
-sudo supervisorctl start $app
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..."
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
-nginxconf=/etc/nginx/conf.d/$domain.d/$app.conf
-sudo cp ../conf/nginx.conf $nginxconf
-sudo chown root: $nginxconf
-sudo chmod 600 $nginxconf
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
 
-# Only give one user access to this app
-sudo yunohost app removeaccess $app
-sudo yunohost app addaccess $app -u $user
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# FIND AND OPEN A PORT
+#=================================================
+ynh_script_progression --message="Finding an available port..."
 
-# Reload web server
-sudo service nginx reload
+# Find an available port
+port=$(ynh_find_port --port=8095)
+ynh_app_setting_set --app=$app --key=port --value=$port
+
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..."
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..."
+
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..."
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# REMOVE GOOGLE !!!
+#=================================================
+
+sed --in-place "/googlecode\|googleapis/d" "$final_path/index.html"
+
+#=================================================
+# SETUP SUPERVISOR
+#=================================================
+ynh_script_progression --message="Configuring supervisor..."
+
+ynh_add_config --template="../conf/supervisor.conf" --destination="/etc/supervisor/conf.d/$app.conf"
+supervisorctl update
+supervisorctl restart $app
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring permissions..."
+
+# Only the admin can access the admin panel of the app (if the app has an admin panel)
+ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..."
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed"

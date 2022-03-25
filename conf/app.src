@@ -1,6 +1,7 @@
-SOURCE_URL=https://github.com/afaqurk/linux-dash/archive/59d4787d3147e79a816a5c88ed8af482a0661e88.zip
-SOURCE_SUM=9c3112c93bb20be8b719335b20bf161e11a8095ecf639baab6ea8c95ef289928
+SOURCE_URL=https://codeload.github.com/afaqurk/linux-dash/tar.gz/186a802ea76e8bfcab7e8e7ebc533b74f80306fc
+SOURCE_SUM=506ae346f69b2002d4e3494d6aaa92104dbc8e50c8740acb2c49bc592a5939ce
 SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
+SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
 SOURCE_FILENAME=
+SOURCE_EXTRACT=true

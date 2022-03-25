@@ -1,45 +1,48 @@
 {
     "name": "Linux-Dash",
     "id": "linuxdash",
+    "packaging_format": 1,
     "description": {
         "en": "A drop-in, low-overhead monitoring web dashboard for GNU/linux machine.",
         "fr": "Tableau de bord léger pour le monitoring d’un serveur GNU/linux."
     },
+    "version": "2.0~ynh2",
     "url": "https://github.com/afaqurk/linux-dash",
-    "license": "free",
+    "upstream": {
+        "license": "MIT",
+        "website": "https://github.com/afaqurk/linux-dash",
+        "demo": "https://afaqurk.github.io/linux-dash/",
+        "admindoc": "https://github.com/afaqurk/linux-dash/wiki",
+        "code": "https://github.com/afaqurk/linux-dash"
+    },
+    "license": "MIT",
     "maintainer": {
         "name": "Moul",
         "email": "moul@moul.re",
         "url": "https://moul.re"
     },
-    "multi_instance": "false",
+    "requirements": {
+        "yunohost": ">= 4.3.0"
+    },
+    "multi_instance": true,
     "services": [
         "nginx"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
-		"type": "domain",
-                "ask": {
-                    "en": "Choose a domain name for Linux-Dash",
-                    "fr": "Choisissez un nom de domaine pour Linux-Dash"
-                },
-                "example": "domain.org"
+                "type": "domain"
             },
             {
                 "name": "path",
-		"type": "path",
-                "ask": {
-                    "en": "Choose a path for Linux-Dash",
-                    "fr": "Choisissez un chemin pour Linux-Dash"
-                },
+                "type": "path",
                 "example": "/dash",
                 "default": "/dash"
             },
             {
-                "name": "user",
-		"type": "user",
+                "name": "admin",
+                "type": "user",
                 "ask": {
                     "en": "Choose the YunoHost user which have access to Linux-Dash",
                     "fr": "Choisissez l’utilisateur YunoHost qui a accès à Linux-Dash"

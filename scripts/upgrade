@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_supervisor
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -37,6 +38,7 @@ ynh_script_progression --message="Backing up the app before upgrading (may take 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	ynh_clean_check_starting
 	# Restore it if the upgrade fails
 	ynh_restore_upgradebackup
 }
@@ -45,6 +47,13 @@ ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Stopping a systemd service..."
+
+ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
@@ -87,6 +96,7 @@ ynh_add_nginx_config
 ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
+ynh_install_nodejs --nodejs_version=$nodejs_version
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -97,16 +107,39 @@ ynh_install_app_dependencies $pkg_dependencies
 sed --in-place "/googlecode\|googleapis/d" "$final_path/index.html"
 
 #=================================================
-# SETUP SUPERVISOR
+# BUILD APP
 #=================================================
-ynh_script_progression --message="Configuring supervisor..."
+ynh_script_progression --message="Building app..."
 
-ynh_add_config --template="../conf/supervisor.conf" --destination="/etc/supervisor/conf.d/$app.conf"
-supervisorctl update
-supervisorctl restart $app
+pushd "$final_path"
+	ynh_use_nodejs
+	ynh_npm install --production
+popd
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Upgrading systemd configuration..."
+
+# Create a dedicated systemd config
+ynh_add_supervisor_config
 
 #=================================================
 # GENERIC FINALIZATION
+#=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..."
+
+yunohost service add $app --log="/var/log/$app/$app.log"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..."
+
+ynh_supervisor_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
 #=================================================
 # RELOAD NGINX
 #=================================================

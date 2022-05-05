@@ -7,12 +7,16 @@
 #=================================================
 
 source _common.sh
+source ynh_supervisor
 source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
 
+ynh_clean_setup () {
+	ynh_clean_check_starting
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
@@ -63,6 +67,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 ynh_script_progression --message="Installing dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
+ynh_install_nodejs --nodejs_version=$nodejs_version
 
 #=================================================
 # CREATE DEDICATED USER
@@ -98,20 +103,45 @@ ynh_add_nginx_config
 #=================================================
 # REMOVE GOOGLE !!!
 #=================================================
+ynh_script_progression --message="Remobing Google..."
 
 sed --in-place "/googlecode\|googleapis/d" "$final_path/index.html"
 
 #=================================================
-# SETUP SUPERVISOR
+# BUILD APP
 #=================================================
-ynh_script_progression --message="Configuring supervisor..."
+ynh_script_progression --message="Building app..."
 
-ynh_add_config --template="../conf/supervisor.conf" --destination="/etc/supervisor/conf.d/$app.conf"
-supervisorctl update
-supervisorctl restart $app
+pushd "$final_path"
+	ynh_use_nodejs
+	ynh_npm install --production
+popd
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Configuring a systemd service..."
+
+# Create a dedicated systemd config
+ynh_add_supervisor_config
 
 #=================================================
 # GENERIC FINALIZATION
+#=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..."
+
+yunohost service add $app --log="/var/log/$app/$app.log"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..."
+
+# Start a systemd service
+ynh_supervisor_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
 #=================================================
 # SETUP SSOWAT
 #=================================================

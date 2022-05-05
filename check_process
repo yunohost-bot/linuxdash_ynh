@@ -11,7 +11,8 @@
 		setup_private=0
 		setup_public=0
 		upgrade=1
-		#upgrade=1	from_commit=CommitHash
+		# 2.0~ynh2
+		upgrade=1	from_commit=1319c98657f9b743cd345185aafc51c7a7da342f
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0

@@ -6,6 +6,7 @@
 
 # dependencies used by the app
 pkg_dependencies="supervisor"
+nodejs_version=12
 
 #=================================================
 # PERSONAL HELPERS

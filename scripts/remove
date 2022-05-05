@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_supervisor
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -23,13 +24,23 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE SUPERVISOR
+# REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Removing supervisor configuration..."
 
-supervisorctl stop $app
-ynh_secure_remove --file="/etc/supervisor/conf.d/$app.conf"
-supervisorctl update
+# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
+if ynh_exec_warn_less yunohost service status $app >/dev/null
+then
+	ynh_script_progression --message="Removing $app service integration..."
+	yunohost service remove $app
+fi
+
+#=================================================
+# STOP AND REMOVE SERVICE
+#=================================================
+ynh_script_progression --message="Stopping and removing the systemd service..."
+
+# Remove the dedicated systemd config
+ynh_remove_supervisor_config
 
 #=================================================
 # REMOVE APP MAIN DIR
@@ -53,6 +64,7 @@ ynh_remove_nginx_config
 ynh_script_progression --message="Removing dependencies..."
 
 # Remove metapackage and its dependencies
+ynh_remove_nodejs
 ynh_remove_app_dependencies
 
 #=================================================

@@ -1,6 +1,6 @@
 [program:__APP__]
 directory=__FINALPATH__/app/server/
-command=python index.py --port __PORT__
+command=__YNH_NODE__ index.js --port __PORT__
 autostart=true
 autorestart=true
 user=__APP__

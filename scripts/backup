@@ -47,7 +47,7 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # SPECIFIC BACKUP
 #=================================================
-# BACKUP SUPERVISOR
+# BACKUP SYSTEMD
 #=================================================
 
 ynh_backup --src_path="/etc/supervisor/conf.d/$app.conf"

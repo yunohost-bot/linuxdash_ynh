@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="supervisor"
+#REMOVEME? pkg_dependencies="supervisor"
 nodejs_version=12
 
 #=================================================

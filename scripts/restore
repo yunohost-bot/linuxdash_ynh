@@ -51,7 +51,7 @@ supervisorctl update
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --log="/var/log/$app/$app.log"
+yunohost service add $app --description="Monitoring web dashboard" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE

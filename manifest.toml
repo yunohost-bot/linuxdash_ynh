@@ -5,19 +5,18 @@ name = "Linux-Dash"
 description.en = "Monitoring web dashboard for GNU/linux machine"
 description.fr = "Tableau de bord léger pour le monitoring d’un serveur GNU/linux"
 
-version = "2.0~ynh3"
+version = "2.0~ynh4"
 
 maintainers = ["Moul"]
 
 [upstream]
 license = "MIT"
-website = "https://github.com/afaqurk/linux-dash"
 demo = "https://afaqurk.github.io/linux-dash/"
 admindoc = "https://github.com/afaqurk/linux-dash/wiki"
 code = "https://github.com/afaqurk/linux-dash"
 
 [integration]
-yunohost = ">= 11.1.19"
+yunohost = ">= 11.1.20"
 architectures = "all"
 multi_instance = true
 ldap = false
@@ -41,6 +40,8 @@ ram.runtime = "50M"
         [resources.sources.main]
         url = "https://github.com/tariqbuilds/linux-dash/archive/186a802ea76e8bfcab7e8e7ebc533b74f80306fc.tar.gz"
         sha256 = "506ae346f69b2002d4e3494d6aaa92104dbc8e50c8740acb2c49bc592a5939ce"
+        autoupdate.upstream = "https://github.com/tariqbuilds/linux-dash"
+        autoupdate.strategy = "latest_github_commit"
 
     [resources.ports]
 

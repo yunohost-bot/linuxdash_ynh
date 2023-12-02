@@ -1,0 +1,56 @@
+packaging_format = 2
+
+id = "linuxdash"
+name = "Linux-Dash"
+description.en = "Monitoring web dashboard for GNU/linux machine"
+description.fr = "Tableau de bord léger pour le monitoring d’un serveur GNU/linux"
+
+version = "2.0~ynh4"
+
+maintainers = ["Moul"]
+
+[upstream]
+license = "MIT"
+demo = "https://afaqurk.github.io/linux-dash/"
+admindoc = "https://github.com/afaqurk/linux-dash/wiki"
+code = "https://github.com/afaqurk/linux-dash"
+
+[integration]
+yunohost = ">= 11.1.20"
+architectures = "all"
+multi_instance = true
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/dash"
+
+    [install.admin]
+    type = "user"
+
+[resources]
+        [resources.sources.main]
+        url = "https://github.com/tariqbuilds/linux-dash/archive/186a802ea76e8bfcab7e8e7ebc533b74f80306fc.tar.gz"
+        sha256 = "506ae346f69b2002d4e3494d6aaa92104dbc8e50c8740acb2c49bc592a5939ce"
+        autoupdate.upstream = "https://github.com/tariqbuilds/linux-dash"
+        autoupdate.strategy = "latest_github_commit"
+
+    [resources.ports]
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = "supervisor"

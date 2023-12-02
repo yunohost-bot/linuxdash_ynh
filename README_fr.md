@@ -26,7 +26,7 @@ A beautiful web dashboard for GNU/Linux which display CPU, RAM, memory, network 
 
 * Documentation officielle de l’admin : <https://github.com/afaqurk/linux-dash/wiki>
 * Dépôt de code officiel de l’app : <https://github.com/afaqurk/linux-dash>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_linuxdash>
+* YunoHost Store: <https://apps.yunohost.org/app/linuxdash>
 * Signaler un bug : <https://github.com/YunoHost-Apps/linuxdash_ynh/issues>
 
 ## Informations pour les développeurs

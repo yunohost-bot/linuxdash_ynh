@@ -7,43 +7,13 @@
 #=================================================
 
 source _common.sh
-source ynh_supervisor
 source /usr/share/yunohost/helpers
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..."
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-admin=$(ynh_app_setting_get --app=$app --key=admin)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-port=$(ynh_app_setting_get --app=$app --key=port)
 
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..."
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
-
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	ynh_clean_check_starting
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -52,19 +22,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
-
-#=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..."
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_supervisor_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -75,12 +33,11 @@ then
 	ynh_script_progression --message="Upgrading source files..."
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path"
+	ynh_setup_source --dest_dir="$install_dir"
 fi
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -95,7 +52,6 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
 ynh_install_nodejs --nodejs_version=$nodejs_version
 
 #=================================================
@@ -104,16 +60,16 @@ ynh_install_nodejs --nodejs_version=$nodejs_version
 # REMOVE GOOGLE !!!
 #=================================================
 
-sed --in-place "/googlecode\|googleapis/d" "$final_path/index.html"
+sed --in-place "/googlecode\|googleapis/d" "$install_dir/index.html"
 
 #=================================================
 # BUILD APP
 #=================================================
 ynh_script_progression --message="Building app..."
 
-pushd "$final_path"
+pushd "$install_dir"
 	ynh_use_nodejs
-	ynh_npm install --production
+	ynh_exec_warn_less ynh_exec_as $app env $ynh_node_load_PATH $ynh_npm install --production
 popd
 
 #=================================================
@@ -131,7 +87,7 @@ ynh_add_supervisor_config
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --log="/var/log/$app/$app.log"
+yunohost service add $app --description="Monitoring web dashboard" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -139,13 +95,6 @@ yunohost service add $app --log="/var/log/$app/$app.log"
 ynh_script_progression --message="Starting a systemd service..."
 
 ynh_supervisor_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
-
-ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT

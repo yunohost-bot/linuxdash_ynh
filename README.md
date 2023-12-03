@@ -19,12 +19,11 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 A beautiful web dashboard for GNU/Linux which display CPU, RAM, memory, network and other usage.
 
 
-**Shipped version:** 2.0~ynh3
+**Shipped version:** 2.0~ynh4
 
 **Demo:** https://afaqurk.github.io/linux-dash/
 ## Documentation and resources
 
-* Official app website: <https://github.com/afaqurk/linux-dash>
 * Official admin documentation: <https://github.com/afaqurk/linux-dash/wiki>
 * Upstream app code repository: <https://github.com/afaqurk/linux-dash>
 * YunoHost Store: <https://apps.yunohost.org/app/linuxdash>

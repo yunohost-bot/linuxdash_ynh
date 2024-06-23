@@ -22,6 +22,10 @@ A beautiful web dashboard for GNU/Linux which display CPU, RAM, memory, network 
 **Versión proporcionada:** 2.0~ynh4
 
 **Demo:** <https://afaqurk.github.io/linux-dash/>
+## :red_circle: Debes considerar
+
+- **Upstream not maintained**: This software is not maintained anymore. Expect it to break down over time, be exposed to unfixed security breaches, etc.
+
 ## Documentación e recursos
 
 - Documentación oficial para admin: <https://github.com/afaqurk/linux-dash/wiki>

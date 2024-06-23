@@ -9,7 +9,7 @@ It shall NOT be edited by hand.
 
 [![Install Linux-Dash with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=linuxdash)
 
-*[Read this README is other languages.](./ALL_README.md)*
+*[Read this README in other languages.](./ALL_README.md)*
 
 > *This package allows you to install Linux-Dash quickly and simply on a YunoHost server.*  
 > *If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
@@ -22,6 +22,10 @@ A beautiful web dashboard for GNU/Linux which display CPU, RAM, memory, network 
 **Shipped version:** 2.0~ynh4
 
 **Demo:** <https://afaqurk.github.io/linux-dash/>
+## :red_circle: Antifeatures
+
+- **Upstream not maintained**: This software is not maintained anymore. Expect it to break down over time, be exposed to unfixed security breaches, etc.
+
 ## Documentation and resources
 
 - Official admin documentation: <https://github.com/afaqurk/linux-dash/wiki>

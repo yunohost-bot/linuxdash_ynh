@@ -16,7 +16,8 @@ admindoc = "https://github.com/afaqurk/linux-dash/wiki"
 code = "https://github.com/afaqurk/linux-dash"
 
 [integration]
-yunohost = ">= 11.1.20"
+yunohost = ">= 11.2.18"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
 ldap = false

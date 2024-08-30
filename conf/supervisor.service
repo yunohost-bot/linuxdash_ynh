@@ -1,6 +1,6 @@
 [program:__APP__]
 directory=__INSTALL_DIR__/app/server/
-command=__YNH_NODE__ index.js --port __PORT__
+command=__NODEJS_DIR__/node index.js --port __PORT__
 autostart=true
 autorestart=true
 user=__APP__
